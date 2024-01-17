@@ -35,6 +35,15 @@ const MainGameScreen = () => {
   const [orientation, setOrientation] = useState("horizontal");
 
   const handleCellClick = (row: number, col: number) => {
+    if (computerViewGrid[row][col].isHit) return; // Prevent re-hitting the same cell
+
+    const hit = computerGrid[row][col].isShip; // Check if there's a ship in the actual computer grid
+    const newGrid = [...computerViewGrid];
+    newGrid[row] = [...newGrid[row]];
+    newGrid[row][col] = { ...newGrid[row][col], isHit: true, isShip: hit };
+
+    setComputerViewGrid(newGrid);
+
     if (selectedShipIndex !== null) {
       const shipLength = shipsToPlace[selectedShipIndex].length;
 
@@ -107,16 +116,20 @@ const MainGameScreen = () => {
             </button>
           ))}
         </div>
-        <GameBoard grid={playerGrid} onCellClick={handleCellClick} />{" "}
-        {/* Player's board with ships */}
+        <GameBoard
+          grid={playerGrid}
+          onCellClick={handleCellClick}
+          showShips={true}
+        />
       </div>
+      {/* Computer's board */}
       <div className='text-center md:w-1/2'>
-        {/* Computer's board */}
         <h2 className='text-2xl font-bold mb-4'>Enemy Ships</h2>
         <GameBoard
           grid={computerViewGrid}
           onCellClick={handlePlayerAttack}
-        />{" "}
+          showShips={false}
+        />
       </div>
     </div>
   );
