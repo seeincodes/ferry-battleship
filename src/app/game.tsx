@@ -34,6 +34,38 @@ const MainGameScreen = () => {
 
   const [orientation, setOrientation] = useState("horizontal");
 
+  const placePlayerShip = (row: number, col: number) => {
+    if (selectedShipIndex !== null) {
+      const shipLength = shipsToPlace[selectedShipIndex].length;
+
+      if (
+        canPlaceShip(
+          playerGrid,
+          row,
+          col,
+          shipLength,
+          orientation === "horizontal",
+          gridSize
+        )
+      ) {
+        const newGrid = placeShip(
+          playerGrid,
+          row,
+          col,
+          shipLength,
+          orientation === "horizontal"
+        );
+        setPlayerGrid(newGrid);
+
+        const newShips = shipsToPlace.map((ship, index) =>
+          index === selectedShipIndex ? { ...ship, placed: true } : ship
+        );
+        setShipsToPlace(newShips);
+        setSelectedShipIndex(null);
+      }
+    }
+  };
+
   const handleCellClick = (row: number, col: number) => {
     if (computerViewGrid[row][col].isHit) return; // Prevent re-hitting the same cell
 
@@ -85,7 +117,30 @@ const MainGameScreen = () => {
   }, []);
 
   const handlePlayerAttack = (row: number, col: number) => {
-    // TODO: Implement logic for player's attack on the computer's grid
+    if (!allShipsPlaced) {
+      alert("Please place all your ships first.");
+      return;
+    }
+
+    // Check if the cell has already been hit
+    if (computerViewGrid[row][col].isHit) {
+      alert("You've already attacked this location.");
+      return;
+    }
+
+    // Check if the attack hits a ship
+    const hit = computerGrid[row][col].isShip;
+
+    // Update the computer's view grid to reflect the hit or miss
+    const newGrid = computerViewGrid.map((gridRow, idx) =>
+      idx === row
+        ? gridRow.map((cell, cellIdx) =>
+            cellIdx === col ? { ...cell, isHit: true, isShip: hit } : cell
+          )
+        : gridRow
+    );
+
+    setComputerViewGrid(newGrid);
   };
 
   return (
@@ -118,8 +173,9 @@ const MainGameScreen = () => {
         </div>
         <GameBoard
           grid={playerGrid}
-          onCellClick={handleCellClick}
+          onCellClick={placePlayerShip}
           showShips={true}
+          allowClicks={!allShipsPlaced}
         />
       </div>
       {/* Computer's board */}
@@ -129,8 +185,21 @@ const MainGameScreen = () => {
           grid={computerViewGrid}
           onCellClick={handlePlayerAttack}
           showShips={false}
+          allowClicks={allShipsPlaced}
         />
       </div>
+      {allShipsPlaced && (
+        <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
+          <button
+            className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+            onClick={() => {
+              /* handle start game logic */
+            }}
+          >
+            Play
+          </button>
+        </div>
+      )}
     </div>
   );
 };
