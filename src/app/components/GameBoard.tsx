@@ -24,7 +24,7 @@ export default function GameBoard({
             if (colIndex === 0) cellStyle += " border-l ";
 
             if (cell.isHit) {
-              cellStyle += cell.isShip ? "bg-green-500" : "bg-red-500"; // Green for hit ship, red for miss
+              cellStyle += cell.isShip ? "bg-green-500" : "bg-black-500"; // Green for hit ship, red for miss
             } else if (showShips && cell.isShip) {
               cellStyle += "bg-gray-500"; // Gray for unhit ship
             } else {

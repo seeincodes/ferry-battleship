@@ -3,7 +3,7 @@ import { initializeGrid, placeShipsRandomly } from "./utils/gameHelpers";
 import GameBoard from "./components/GameBoard";
 import { Cell, canPlaceShip, placeShip } from "./utils/placeships";
 
-const MainGameScreen = () => {
+export default function MainGameScreen() {
   const gridSize = 10;
   const [computerGrid, setComputerGrid] = useState(initializeGrid(gridSize));
   const [computerViewGrid, setComputerViewGrid] = useState(
@@ -81,47 +81,6 @@ const MainGameScreen = () => {
     ));
   };
 
-  function handleCellClick(row: number, col: number) {
-    if (computerViewGrid[row][col].isHit) return; // Prevent re-hitting the same cell
-
-    const hit = computerGrid[row][col].isShip; // Check if there's a ship in the actual computer grid
-    const newGrid = [...computerViewGrid];
-    newGrid[row] = [...newGrid[row]];
-    newGrid[row][col] = { ...newGrid[row][col], isHit: true, isShip: hit };
-
-    setComputerViewGrid(newGrid);
-
-    if (selectedShipIndex !== null) {
-      const shipLength = shipsToPlace[selectedShipIndex].length;
-
-      if (
-        canPlaceShip(
-          playerGrid,
-          row,
-          col,
-          shipLength,
-          orientation === "horizontal",
-          gridSize
-        )
-      ) {
-        const newGrid = placeShip(
-          playerGrid,
-          row,
-          col,
-          shipLength,
-          orientation === "horizontal"
-        );
-        setPlayerGrid(newGrid);
-
-        const newShips = shipsToPlace.map((ship, index) =>
-          index === selectedShipIndex ? { ...ship, placed: true } : ship
-        );
-        setShipsToPlace(newShips);
-        setSelectedShipIndex(null);
-      }
-    }
-  }
-
   const selectShipForPlacement = (index: number) => {
     setSelectedShipIndex(index);
   };
@@ -165,22 +124,54 @@ const MainGameScreen = () => {
     handleComputerTurn();
   };
 
-  function handleComputerTurn() {
-    let row, col;
-    do {
-      row = Math.floor(Math.random() * gridSize);
-      col = Math.floor(Math.random() * gridSize);
-    } while (playerGrid[row][col].isHit); // Repeat until an unhit cell is found
+  // Add state to track the last hit position and direction
+  const [lastHit, setLastHit] = useState({
+    row: null,
+    col: null,
+    direction: null,
+  });
 
+  function handleComputerTurn() {
+    let row, col, direction;
+    if (lastHit.row !== null && lastHit.col !== null) {
+      // Logic to guess adjacent cells
+      // You can add more sophisticated logic to cycle through directions
+      // For simplicity, this example just guesses the next cell in a row
+
+      ({ row, col, direction } = getNextGuess(lastHit));
+    } else {
+      do {
+        row = Math.floor(Math.random() * gridSize);
+        col = Math.floor(Math.random() * gridSize);
+      } while (playerGrid[row][col].isHit);
+    }
+
+    const hit = playerGrid[row][col].isShip;
     const newGrid = [...playerGrid];
     newGrid[row] = [...newGrid[row]];
-    newGrid[row][col] = {
-      ...newGrid[row][col],
-      isHit: true,
-      isShip: newGrid[row][col].isShip,
-    };
+    newGrid[row][col] = { ...newGrid[row][col], isHit: true, isShip: hit };
 
     setPlayerGrid(newGrid);
+
+    if (hit) {
+      setLastHit({ row, col, direction: direction || "horizontal" });
+    } else {
+      setLastHit({ row: null, col: null, direction: null });
+    }
+  }
+
+  function getNextGuess(lastHit: any) {
+    // Example logic for guessing the next cell in a row
+    let { row, col, direction } = lastHit;
+    if (direction === "horizontal") {
+      col =
+        col + 1 < gridSize && !playerGrid[row][col + 1].isHit
+          ? col + 1
+          : col - 1;
+    } else {
+      // Add logic for vertical guessing if needed
+    }
+    return { row, col, direction };
   }
 
   return (
@@ -231,6 +222,4 @@ const MainGameScreen = () => {
       )}
     </div>
   );
-};
-
-export default MainGameScreen;
+}
