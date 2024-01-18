@@ -27,6 +27,12 @@ export default function MainGameScreen() {
   ]);
 
   const allShipsPlaced = shipsToPlace.every((ship) => ship.placed);
+  const [gameStarted, setGameStarted] = useState(false); // New state to track game status
+
+  function handleStartGame() {
+    setGameStarted(true);
+    // Any additional logic to start the game
+  }
 
   const [selectedShipIndex, setSelectedShipIndex] = useState<number | null>(
     null
@@ -208,13 +214,11 @@ export default function MainGameScreen() {
           allowClicks={allShipsPlaced}
         />
       </div>
-      {allShipsPlaced && (
+      {!gameStarted && allShipsPlaced && (
         <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
           <button
             className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-            onClick={() => {
-              /* handle start game logic */
-            }}
+            onClick={handleStartGame}
           >
             Play
           </button>
