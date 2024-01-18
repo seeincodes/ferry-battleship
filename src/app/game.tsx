@@ -66,6 +66,21 @@ const MainGameScreen = () => {
     }
   };
 
+  const renderShipButtons = () => {
+    return shipsToPlace.map((ship, index) => (
+      <button
+        key={index}
+        disabled={ship.placed}
+        onClick={() => selectShipForPlacement(index)}
+        className={`m-2 p-2 text-white font-bold py-2 px-4 rounded ${
+          ship.placed ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-700"
+        }`}
+      >
+        Ship {ship.length}
+      </button>
+    ));
+  };
+
   const handleCellClick = (row: number, col: number) => {
     if (computerViewGrid[row][col].isHit) return; // Prevent re-hitting the same cell
 
@@ -159,18 +174,7 @@ const MainGameScreen = () => {
         >
           Vertical
         </button>
-        <div>
-          {shipsToPlace.map((ship, index) => (
-            <button
-              key={index}
-              disabled={ship.placed}
-              onClick={() => selectShipForPlacement(index)}
-              className='m-2 p-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-            >
-              Ship {ship.length}
-            </button>
-          ))}
-        </div>
+        <div>{renderShipButtons()}</div>
         <GameBoard
           grid={playerGrid}
           onCellClick={placePlayerShip}

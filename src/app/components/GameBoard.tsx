@@ -21,7 +21,7 @@ export default function GameBoard({
           {row.map((cell, colIndex) => {
             let cellStyle = "w-8 h-8 ";
             if (cell.isHit && allowClicks) {
-              cellStyle += cell.isShip ? "bg-green-500" : "bg-red-500";
+              cellStyle += cell.isShip ? "bg-green-500" : "bg-black-500";
             } else if (showShips && cell.isShip) {
               cellStyle += "bg-gray-500";
             } else {
