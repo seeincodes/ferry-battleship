@@ -81,7 +81,7 @@ const MainGameScreen = () => {
     ));
   };
 
-  const handleCellClick = (row: number, col: number) => {
+  function handleCellClick(row: number, col: number) {
     if (computerViewGrid[row][col].isHit) return; // Prevent re-hitting the same cell
 
     const hit = computerGrid[row][col].isShip; // Check if there's a ship in the actual computer grid
@@ -120,15 +120,21 @@ const MainGameScreen = () => {
         setSelectedShipIndex(null);
       }
     }
-  };
+  }
 
   const selectShipForPlacement = (index: number) => {
     setSelectedShipIndex(index);
   };
 
   useEffect(() => {
+    // console.log("Placing ships for computer"); // For debugging
+
+    // Create a new initialized grid to ensure immutability
+    const initializedGrid = initializeGrid(gridSize);
+
     // Randomly place ships for the computer
-    setComputerGrid(placeShipsRandomly(computerGrid));
+    const newComputerGrid = placeShipsRandomly(initializedGrid);
+    setComputerGrid(newComputerGrid);
   }, []);
 
   const handlePlayerAttack = (row: number, col: number) => {
@@ -156,7 +162,26 @@ const MainGameScreen = () => {
     );
 
     setComputerViewGrid(newGrid);
+    handleComputerTurn();
   };
+
+  function handleComputerTurn() {
+    let row, col;
+    do {
+      row = Math.floor(Math.random() * gridSize);
+      col = Math.floor(Math.random() * gridSize);
+    } while (playerGrid[row][col].isHit); // Repeat until an unhit cell is found
+
+    const newGrid = [...playerGrid];
+    newGrid[row] = [...newGrid[row]];
+    newGrid[row][col] = {
+      ...newGrid[row][col],
+      isHit: true,
+      isShip: newGrid[row][col].isShip,
+    };
+
+    setPlayerGrid(newGrid);
+  }
 
   return (
     <div className='flex flex-col md:flex-row justify-around my-8 w-full'>

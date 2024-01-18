@@ -19,19 +19,17 @@ export default function GameBoard({
       {grid.map((row, rowIndex) => (
         <div className='flex' key={rowIndex}>
           {row.map((cell, colIndex) => {
-            let cellStyle = "w-8 h-8 ";
-            if (cell.isHit && allowClicks) {
-              cellStyle += cell.isShip ? "bg-green-500" : "bg-black-500";
-            } else if (showShips && cell.isShip) {
-              cellStyle += "bg-gray-500";
-            } else {
-              cellStyle += "bg-blue-500";
-            }
-
-            // Apply border styles
-            cellStyle += " border-gray-200 border-b border-r ";
+            let cellStyle = "w-8 h-8 border-gray-200 border-b border-r ";
             if (rowIndex === 0) cellStyle += " border-t ";
             if (colIndex === 0) cellStyle += " border-l ";
+
+            if (cell.isHit) {
+              cellStyle += cell.isShip ? "bg-green-500" : "bg-red-500"; // Green for hit ship, red for miss
+            } else if (showShips && cell.isShip) {
+              cellStyle += "bg-gray-500"; // Gray for unhit ship
+            } else {
+              cellStyle += "bg-blue-500"; // Blue for water
+            }
 
             return (
               <div
