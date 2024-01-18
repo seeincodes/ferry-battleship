@@ -26,7 +26,7 @@ export const placeShipsRandomly = (grid: Cell[][]): Cell[][] => {
     }
   }
   // console.log(
-  //   "Final Grid:",
+  //   "Final Grid: \n",
   //   grid
   //     .map((row) => row.map((cell) => (cell.isShip ? "S" : ".")).join(""))
   //     .join("\n")
@@ -38,18 +38,29 @@ export const placeShipsRandomly = (grid: Cell[][]): Cell[][] => {
 // Check if a ship can be placed at the specified position
 const canPlaceShip = (
   grid: Cell[][],
-  row: number,
-  col: number,
+  startRow: number,
+  startCol: number,
   length: number,
   isHorizontal: boolean,
   gridSize: number
 ): boolean => {
   for (let i = 0; i < length; i++) {
-    const r = row + (isHorizontal ? 0 : i);
-    const c = col + (isHorizontal ? i : 0);
+    const row = startRow + (isHorizontal ? 0 : i);
+    const col = startCol + (isHorizontal ? i : 0);
 
-    if (r >= gridSize || c >= gridSize || grid[r][c].isShip) {
-      return false;
+    // Check if the ship goes out of bounds
+    if (row >= gridSize || col >= gridSize) return false;
+
+    // Check if the current cell and surrounding cells are free
+    const rowStart = Math.max(row - 1, 0);
+    const rowEnd = Math.min(row + 1, gridSize - 1);
+    const colStart = Math.max(col - 1, 0);
+    const colEnd = Math.min(col + 1, gridSize - 1);
+
+    for (let r = rowStart; r <= rowEnd; r++) {
+      for (let c = colStart; c <= colEnd; c++) {
+        if (grid[r][c].isShip) return false;
+      }
     }
   }
 
