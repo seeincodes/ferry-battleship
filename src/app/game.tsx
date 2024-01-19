@@ -123,8 +123,8 @@ export default function MainGameScreen() {
     if (hit) {
       seTotalCompShips((prev) => prev - 1);
     }
-    console.log("Player hit comp ship", hit);
-    console.log("Total player ships", totalCompShips);
+    // console.log("Player hit comp ship", hit);
+    // console.log("Total player ships", totalCompShips);
 
     // Update the computer's view grid to reflect the hit or miss
     const newGrid = computerViewGrid.map((gridRow, idx) =>
@@ -169,8 +169,8 @@ export default function MainGameScreen() {
     if (hit) {
       setTotalPlayerShips((prev) => prev - 1);
     }
-    console.log("Comp hit player ship", hit);
-    console.log("Total player ships", totalCompShips);
+    // console.log("Comp hit player ship", hit);
+    // console.log("Total player ships", totalCompShips);
     const newGrid = [...playerGrid];
     newGrid[row] = [...newGrid[row]];
     newGrid[row][col] = { ...newGrid[row][col], isHit: true, isShip: hit };
