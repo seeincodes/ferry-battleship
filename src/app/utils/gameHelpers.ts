@@ -25,12 +25,12 @@ export const placeShipsRandomly = (grid: Cell[][]): Cell[][] => {
       }
     }
   }
-  // console.log(
-  //   "Final Grid: \n",
-  //   grid
-  //     .map((row) => row.map((cell) => (cell.isShip ? "S" : ".")).join(""))
-  //     .join("\n")
-  // );
+  console.log(
+    "Final Grid: \n",
+    grid
+      .map((row) => row.map((cell) => (cell.isShip ? "S" : ".")).join(""))
+      .join("\n")
+  );
 
   return grid;
 };

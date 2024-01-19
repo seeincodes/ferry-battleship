@@ -102,6 +102,10 @@ export default function MainGameScreen() {
     setComputerGrid(newComputerGrid);
   }, []);
 
+  const [totalPlayerShips, setTotalPlayerShips] = useState(15);
+  const [totalCompShips, seTotalCompShips] = useState(15);
+  const [winner, setWinner] = useState<string | null>(null);
+
   const handlePlayerAttack = (row: number, col: number) => {
     if (!allShipsPlaced) {
       alert("Please place all your ships first.");
@@ -116,6 +120,11 @@ export default function MainGameScreen() {
 
     // Check if the attack hits a ship
     const hit = computerGrid[row][col].isShip;
+    if (hit) {
+      seTotalCompShips((prev) => prev - 1);
+    }
+    console.log("Player hit comp ship", hit);
+    console.log("Total player ships", totalCompShips);
 
     // Update the computer's view grid to reflect the hit or miss
     const newGrid = computerViewGrid.map((gridRow, idx) =>
@@ -128,6 +137,10 @@ export default function MainGameScreen() {
 
     setComputerViewGrid(newGrid);
     handleComputerTurn();
+
+    if (hit && totalCompShips === 1) {
+      setWinner("You");
+    }
   };
 
   // Add state to track the last hit position and direction
@@ -153,16 +166,19 @@ export default function MainGameScreen() {
     }
 
     const hit = playerGrid[row][col].isShip;
+    if (hit) {
+      setTotalPlayerShips((prev) => prev - 1);
+    }
+    console.log("Comp hit player ship", hit);
+    console.log("Total player ships", totalCompShips);
     const newGrid = [...playerGrid];
     newGrid[row] = [...newGrid[row]];
     newGrid[row][col] = { ...newGrid[row][col], isHit: true, isShip: hit };
 
     setPlayerGrid(newGrid);
 
-    if (hit) {
-      setLastHit({ row, col, direction: direction || "horizontal" });
-    } else {
-      setLastHit({ row: null, col: null, direction: null });
+    if (hit && totalPlayerShips === 1) {
+      setWinner("Computer");
     }
   }
 
@@ -174,8 +190,11 @@ export default function MainGameScreen() {
         col + 1 < gridSize && !playerGrid[row][col + 1].isHit
           ? col + 1
           : col - 1;
-    } else {
-      // Add logic for vertical guessing if needed
+    } else if (direction === "vertical") {
+      row =
+        row + 1 < gridSize && !playerGrid[row + 1][col].isHit
+          ? row + 1
+          : row - 1;
     }
     return { row, col, direction };
   }
@@ -224,6 +243,10 @@ export default function MainGameScreen() {
           </button>
         </div>
       )}
+
+      <div className='flex flex-col md:flex-row justify-around my-8 w-full'>
+        {winner && <div className='winner-announcement'>Winner: {winner}</div>}
+      </div>
     </div>
   );
 }
