@@ -199,6 +199,8 @@ export default function MainGameScreen() {
     return { row, col, direction };
   }
 
+  // reset game after winner has been announced
+
   return (
     <div className='flex flex-col md:flex-row justify-around my-8 w-full'>
       <div className='text-center mb-8 md:mb-0 md:w-1/2'>
@@ -245,7 +247,11 @@ export default function MainGameScreen() {
       )}
 
       <div className='flex flex-col md:flex-row justify-around my-8 w-full'>
-        {winner && <div className='winner-announcement'>Winner: {winner}</div>}
+        {winner && (
+          <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white border-2 border-black p-4 rounded-lg shadow-lg text-black z-10'>
+            {winner} won!
+          </div>
+        )}
       </div>
     </div>
   );
